@@ -1,39 +1,50 @@
-import 'package:flutter/foundation.dart';
-
 class TodoModel {
+  //    ToDo MODEL FIELDS
+
   int id;
   String title;
-  bool isCompleted;
-  TodoPriority priority;
+  bool isComplated;
+  Priority priority;
+
+  //    CONSTRUCTOR FOR THESE FIELDS
 
   TodoModel({
     required this.id,
     required this.title,
-    this.isCompleted = false,
-    required this.priority,
+    this.isComplated = false,
+    this.priority = Priority.no,
   });
 
-  // DATA TO JSON 
+  //    FROM DART-OBJECT TO MAP (READY TO BE JSON FORMAT)
 
-  Map<String, dynamic> toJson() {
+  Map<String, dynamic> toMap() {
     return {
       'id': id,
       'title': title,
-      'isCompleted': isCompleted,
-      'priority': priority.index,
+      'isComplated': isComplated,
+      'priority': priority,
     };
   }
 
-  // JSON TO DATA
-  
-  factory TodoModel.fromJson(Map<String, dynamic> json) {
+  //    FROM MAP (READY TO BE JSON FORMAT) TO DART-OJBECT FORMAT
+
+  factory TodoModel.fromMap(Map<String, dynamic> mapData) {
     return TodoModel(
-      id: json['id'],
-      title: json['title'],
-      isCompleted: json['isCompleted'] ?? false,
-      priority: TodoPriority.values[json['priority']],
+      id: mapData['id'],
+      title: mapData['title'],
+      isComplated: mapData['isComplated'],
+
+//      JUST TRYING TO FIND FIRST FINDABLE ENUM VALUE FROM MAP
+//      AND REPLACE IT TO priority FIELD OF NEW TodoModel OBJECT
+//      WHEN IT CANT FIND ENUM VALUE, IT WILL KEEP A DEFAULT VALUE "no"
+
+      priority: Priority.values.firstWhere(
+        (find) => find.name == mapData['Priority'],
+        orElse: () => Priority.no,
+      ),
     );
   }
 }
+//    ToDo Priority levels enum
 
-enum TodoPriority { low, medium, high }
+enum Priority { low, medium, high, no }
