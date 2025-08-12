@@ -1,33 +1,32 @@
+import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../models/todo_model.dart';
-import 'dart:convert';
 
-class SharedPreferenceStorage {
-  final String todosKey = 'Todo';
+final stringKey = 'todos';
 
-  Future<List<TodoModel>> loadTodos() async {
-    final prefs = await SharedPreferences.getInstance();
-    final jsonString = prefs.getString(todosKey);
+Future<void> saveTodos(List<TodoModel> listObject) async {
+  final prefs = await SharedPreferences.getInstance();
 
-    if (jsonString == null || jsonString.isEmpty) {
-      return [];
-    } else {
-      final List<dynamic> decoded = jsonDecode(jsonString);
+  List<Map<String, dynamic>> mappedList = listObject
+      .map((todos) => todos.toMap())
+      .toList();
 
-      final todoObjects = decoded
-          .map((e) => TodoModel.fromMap(Map<String, dynamic>.from(e as Map)))
-          .toList();
+  String jsonString = jsonEncode(mappedList);
 
-      return todoObjects;
-    }
-  }
-  Future<void> saveTodos(List<TodoModel> todos) async {
-    final prefs = await SharedPreferences.getInstance();
-    final jsonList = todos.map((todo) => todo.toMap()).toList();
-    final jsonString = jsonEncode(jsonList);
-    await prefs.setString(todosKey, jsonString);
-  }
+  await prefs.setString(stringKey, jsonString);
 }
 
+Future<List<TodoModel>> loadTodos() async {
+  final prefs = await SharedPreferences.getInstance();
+  final jsonString = prefs.getString(stringKey);
 
- 
+  if (jsonString == null || jsonString.isEmpty) {
+    return [];
+  } else {
+    final deCoded = jsonDecode(jsonString) as List<dynamic>;
+    final List<TodoModel> todosObject = deCoded
+        .map<TodoModel>((e) => TodoModel.fromMap(e as Map<String, dynamic>))
+        .toList();
+    return todosObject;
+  }
+}
