@@ -30,5 +30,11 @@ class TodoNotifier extends StateNotifier<List<TodoModel>> {
     await saveTodos(state);
   }
 
+  Future <void> deleteTodo(int id) async {
+    state = state.where((todo) => todo.id != id).toList();
+    await saveTodos(state);
+
+  }
+
   
 }
