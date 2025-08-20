@@ -45,8 +45,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     ),
                   ),
                   trailing: IconButton(
-                    onPressed: () {},
-                    // _deleteTodo(todo),
+                    onPressed: () {
+                      todoNotifier.deleteTodo(todo.id);
+                    },
+
                     icon: Icon(Icons.delete, color: Colors.redAccent),
                   ),
                 );
